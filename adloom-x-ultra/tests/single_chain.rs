@@ -44,9 +44,11 @@ async fn single_chain_test() {
             );
             block.with_operation(
                 application_id,
-                Operation::FundCampaign {
+                Operation::RegisterCampaign {
                     advertiser_id: "adv-a".into(),
-                    amount: "5000".into(),
+                    campaign_id: "camp-a".into(),
+                    budget: "5000".into(),
+                    floor_cpm_micros: 1500,
                 },
             );
         })
@@ -56,7 +58,8 @@ async fn single_chain_test() {
         .add_block(|block| {
             block.with_operation(
                 application_id,
-                Operation::RecordAttention {
+                Operation::RecordVerifiedView {
+                    campaign_id: Some("camp-a".into()),
                     advertiser_id: "adv-a".into(),
                     creator_id: "creator-a".into(),
                     viewer_id: "viewer-a".into(),

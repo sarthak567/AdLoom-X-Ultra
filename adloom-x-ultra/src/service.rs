@@ -13,8 +13,8 @@ use linera_sdk::{
 use adloom_x_ultra::Operation;
 
 use self::state::{
-    AdloomLedger, AdloomXUltraState, AdvertiserAccount, AttentionEvent, CreatorAccount,
-    ViewerAccount,
+    AdloomLedger, AdloomXUltraState, AdvertiserAccount, AfiLoan, AttentionEvent, BrandInstruction,
+    Campaign, CreatorAccount, CreatorVault, ViewerAccount,
 };
 
 pub struct AdloomXUltraService {
@@ -105,6 +105,47 @@ impl QueryRoot {
             .take(take)
             .cloned()
             .map(AttentionEventSnapshot::from)
+            .collect()
+    }
+
+    async fn campaigns(&self, limit: Option<i32>) -> Vec<CampaignSnapshot> {
+        let take = limit.unwrap_or(10).max(0) as usize;
+        self.ledger
+            .campaigns
+            .values()
+            .take(take)
+            .cloned()
+            .map(CampaignSnapshot::from)
+            .collect()
+    }
+
+    async fn creator_vaults(&self) -> Vec<CreatorVaultSnapshot> {
+        self.ledger
+            .creator_vaults
+            .values()
+            .cloned()
+            .map(CreatorVaultSnapshot::from)
+            .collect()
+    }
+
+    async fn viewer_loans(&self) -> Vec<AfiLoanSnapshot> {
+        self.ledger
+            .viewer_loans
+            .values()
+            .cloned()
+            .map(AfiLoanSnapshot::from)
+            .collect()
+    }
+
+    async fn ai_instructions(&self, limit: Option<i32>) -> Vec<BrandInstructionSnapshot> {
+        let take = limit.unwrap_or(10).max(0) as usize;
+        self.ledger
+            .brand_instructions
+            .iter()
+            .rev()
+            .take(take)
+            .cloned()
+            .map(BrandInstructionSnapshot::from)
             .collect()
     }
 }
@@ -215,6 +256,7 @@ impl AdvertiserSnapshot {
 #[graphql(rename_fields = "camelCase")]
 struct AttentionEventSnapshot {
     id: u64,
+    campaign_id: Option<String>,
     viewer_id: String,
     creator_id: String,
     advertiser_id: String,
@@ -229,6 +271,7 @@ impl From<AttentionEvent> for AttentionEventSnapshot {
     fn from(value: AttentionEvent) -> Self {
         Self {
             id: value.id,
+            campaign_id: value.campaign_id,
             viewer_id: value.viewer_id,
             creator_id: value.creator_id,
             advertiser_id: value.advertiser_id,
@@ -237,6 +280,85 @@ impl From<AttentionEvent> for AttentionEventSnapshot {
             viewer_share: value.viewer_share.to_string(),
             creator_share: value.creator_share.to_string(),
             protocol_share: value.protocol_share.to_string(),
+        }
+    }
+}
+
+#[derive(SimpleObject)]
+#[graphql(rename_fields = "camelCase")]
+struct CampaignSnapshot {
+    id: String,
+    advertiser_id: String,
+    budget_remaining: String,
+    floor_cpm_micros: u64,
+    impressions_served: u64,
+    variant_count: usize,
+}
+
+impl From<Campaign> for CampaignSnapshot {
+    fn from(value: Campaign) -> Self {
+        Self {
+            id: value.id,
+            advertiser_id: value.advertiser_id,
+            budget_remaining: value.budget_remaining.to_string(),
+            floor_cpm_micros: value.floor_cpm_micros,
+            impressions_served: value.impressions_served,
+            variant_count: value.ad_variants.len(),
+        }
+    }
+}
+
+#[derive(SimpleObject)]
+#[graphql(rename_fields = "camelCase")]
+struct CreatorVaultSnapshot {
+    creator_id: String,
+    staked_amount: String,
+    apy_bps: u64,
+}
+
+impl From<CreatorVault> for CreatorVaultSnapshot {
+    fn from(vault: CreatorVault) -> Self {
+        Self {
+            creator_id: vault.creator_id,
+            staked_amount: vault.staked_amount.to_string(),
+            apy_bps: vault.apy_bps,
+        }
+    }
+}
+
+#[derive(SimpleObject)]
+#[graphql(rename_fields = "camelCase")]
+struct AfiLoanSnapshot {
+    viewer_id: String,
+    principal: String,
+    outstanding: String,
+    status: String,
+}
+
+impl From<AfiLoan> for AfiLoanSnapshot {
+    fn from(loan: AfiLoan) -> Self {
+        Self {
+            viewer_id: loan.viewer_id,
+            principal: loan.principal.to_string(),
+            outstanding: loan.outstanding.to_string(),
+            status: loan.status,
+        }
+    }
+}
+
+#[derive(SimpleObject)]
+struct BrandInstructionSnapshot {
+    id: u64,
+    advertiser_id: String,
+    instruction: String,
+}
+
+impl From<BrandInstruction> for BrandInstructionSnapshot {
+    fn from(entry: BrandInstruction) -> Self {
+        Self {
+            id: entry.id,
+            advertiser_id: entry.advertiser_id,
+            instruction: entry.instruction,
         }
     }
 }

@@ -23,11 +23,36 @@ const DASHBOARD_QUERY = gql`
     }
     events(limit: $limit) {
       id
+      campaignId
       viewerId
       creatorId
       advertiserId
       attnUnits
       reward
+    }
+    campaigns(limit: $limit) {
+      id
+      advertiserId
+      budgetRemaining
+      floorCpmMicros
+      impressionsServed
+      variantCount
+    }
+    creatorVaults {
+      creatorId
+      stakedAmount
+      apyBps
+    }
+    viewerLoans {
+      viewerId
+      principal
+      outstanding
+      status
+    }
+    aiInstructions(limit: $limit) {
+      id
+      advertiserId
+      instruction
     }
   }
 `;
@@ -44,11 +69,40 @@ export interface LeaderboardEntry {
 
 export interface AttentionEventRow {
   id: number;
+  campaignId?: string | null;
   viewerId: string;
   creatorId: string;
   advertiserId: string;
   attnUnits: number;
   reward: string;
+}
+
+export interface CampaignRow {
+  id: string;
+  advertiserId: string;
+  budgetRemaining: string;
+  floorCpmMicros: number;
+  impressionsServed: number;
+  variantCount: number;
+}
+
+export interface CreatorVaultRow {
+  creatorId: string;
+  stakedAmount: string;
+  apyBps: number;
+}
+
+export interface ViewerLoanRow {
+  viewerId: string;
+  principal: string;
+  outstanding: string;
+  status: string;
+}
+
+export interface BrandInstructionRow {
+  id: number;
+  advertiserId: string;
+  instruction: string;
 }
 
 export interface RemotePulse {
@@ -63,6 +117,10 @@ export interface RemotePulse {
   };
   leaderboard: LeaderboardEntry[];
   events: AttentionEventRow[];
+  campaigns: CampaignRow[];
+  creatorVaults: CreatorVaultRow[];
+  viewerLoans: ViewerLoanRow[];
+  aiInstructions: BrandInstructionRow[];
 }
 
 interface HookState {

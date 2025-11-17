@@ -82,6 +82,17 @@ impl Contract for AdloomXUltraContract {
                     .fund_campaign(&advertiser_id, parsed)
                     .expect("fund campaign failed");
             }
+            Operation::RegisterCampaign {
+                advertiser_id,
+                campaign_id,
+                budget,
+                floor_cpm_micros,
+            } => {
+                let parsed = parse_amount(&budget);
+                ledger
+                    .register_campaign(&advertiser_id, campaign_id, parsed, floor_cpm_micros)
+                    .expect("campaign registration failed");
+            }
             Operation::ConfigureAiAgent {
                 advertiser_id,
                 ai_notes,
@@ -97,7 +108,8 @@ impl Contract for AdloomXUltraContract {
                     )
                     .expect("AI mandate update failed");
             }
-            Operation::RecordAttention {
+            Operation::RecordVerifiedView {
+                campaign_id,
                 advertiser_id,
                 creator_id,
                 viewer_id,
@@ -106,7 +118,8 @@ impl Contract for AdloomXUltraContract {
             } => {
                 let parsed_reward = parse_amount(&reward_per_unit);
                 ledger
-                    .record_attention(
+                    .record_verified_view(
+                        campaign_id.as_deref(),
                         &advertiser_id,
                         &creator_id,
                         &viewer_id,
@@ -114,6 +127,27 @@ impl Contract for AdloomXUltraContract {
                         parsed_reward,
                     )
                     .expect("attention logging failed");
+            }
+            Operation::EvolveAdVariant {
+                campaign_id,
+                variant_id,
+                headline,
+                status,
+            } => {
+                ledger
+                    .evolve_ad_variant(&campaign_id, variant_id, headline, status)
+                    .expect("variant evolution failed");
+            }
+            Operation::StakeCreatorVault { creator_id, amount } => {
+                let parsed = parse_amount(&amount);
+                ledger
+                    .stake_creator_vault(&creator_id, parsed)
+                    .expect("vault stake failed");
+            }
+            Operation::HarvestCreatorVaultYield { creator_id } => {
+                ledger
+                    .harvest_creator_vault(&creator_id)
+                    .expect("vault harvest failed");
             }
             Operation::RequestAttentionCredit { viewer_id, amount } => {
                 let parsed = parse_amount(&amount);
@@ -126,6 +160,26 @@ impl Contract for AdloomXUltraContract {
                 ledger
                     .clear_credit(&viewer_id, parsed)
                     .expect("credit clearance failed");
+            }
+            Operation::RequestAfiLoan { viewer_id, amount } => {
+                let parsed = parse_amount(&amount);
+                ledger
+                    .request_afi_loan(&viewer_id, parsed)
+                    .expect("loan request failed");
+            }
+            Operation::RepayAfiLoan { viewer_id, amount } => {
+                let parsed = parse_amount(&amount);
+                ledger
+                    .repay_afi_loan(&viewer_id, parsed)
+                    .expect("loan repayment failed");
+            }
+            Operation::SubmitBrandInstruction {
+                advertiser_id,
+                instruction,
+            } => {
+                ledger
+                    .submit_brand_instruction(&advertiser_id, instruction)
+                    .expect("instruction submission failed");
             }
         }
         self.state.ledger.set(ledger);
@@ -175,14 +229,17 @@ mod tests {
         .now_or_never()
         .unwrap();
 
-        app.execute_operation(Operation::FundCampaign {
+        app.execute_operation(Operation::RegisterCampaign {
             advertiser_id: "adv-alpha".into(),
-            amount: "1000".into(),
+            campaign_id: "camp-alpha".into(),
+            budget: "1000".into(),
+            floor_cpm_micros: 1500,
         })
         .now_or_never()
         .unwrap();
 
-        app.execute_operation(Operation::RecordAttention {
+        app.execute_operation(Operation::RecordVerifiedView {
+            campaign_id: Some("camp-alpha".into()),
             advertiser_id: "adv-alpha".into(),
             creator_id: "creator-alpha".into(),
             viewer_id: "viewer-alpha".into(),
@@ -192,13 +249,55 @@ mod tests {
         .now_or_never()
         .unwrap();
 
+        app.execute_operation(Operation::StakeCreatorVault {
+            creator_id: "creator-alpha".into(),
+            amount: "200".into(),
+        })
+        .now_or_never()
+        .unwrap();
+
+        app.execute_operation(Operation::HarvestCreatorVaultYield {
+            creator_id: "creator-alpha".into(),
+        })
+        .now_or_never()
+        .unwrap();
+
+        app.execute_operation(Operation::RequestAfiLoan {
+            viewer_id: "viewer-alpha".into(),
+            amount: "50".into(),
+        })
+        .now_or_never()
+        .unwrap();
+
+        app.execute_operation(Operation::RepayAfiLoan {
+            viewer_id: "viewer-alpha".into(),
+            amount: "25".into(),
+        })
+        .now_or_never()
+        .unwrap();
+
+        app.execute_operation(Operation::SubmitBrandInstruction {
+            advertiser_id: "adv-alpha".into(),
+            instruction: "Boost eco narratives".into(),
+        })
+        .now_or_never()
+        .unwrap();
+
         let ledger = app.state.ledger.get().clone();
         let viewer = ledger.viewers.get("viewer-alpha").unwrap();
         let creator = ledger.creators.get("creator-alpha").unwrap();
+        let campaign = ledger.campaigns.get("camp-alpha").unwrap();
         assert!(viewer.total_earned > 0);
         assert_eq!(viewer.lifetime_impressions, 5);
         assert!(creator.total_earned > 0);
         assert_eq!(ledger.total_impressions, 5);
+        assert_eq!(campaign.impressions_served, 5);
+        assert!(ledger.creator_vaults.contains_key("creator-alpha"));
+        assert!(ledger.viewer_loans.contains_key("viewer-alpha"));
+        assert_eq!(
+            ledger.brand_instructions.last().unwrap().instruction,
+            "Boost eco narratives"
+        );
     }
 
     fn create_and_instantiate_app() -> AdloomXUltraContract {

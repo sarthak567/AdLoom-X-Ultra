@@ -1,0 +1,171 @@
+{
+  "user": {
+    "name": "Avery Lin",
+    "email": "avery@adloom.xyz",
+    "role": "Operations Lead",
+    "organization": "AdLoom X Ultra"
+  },
+  "viewers": [
+    {
+      "handle": "@fluxseer",
+      "attentionScore": 812,
+      "earnings": "1,240 $ATTN",
+      "afiLimit": "120 $ATTN",
+      "streak": "22 days"
+    },
+    {
+      "handle": "@zenwatcher",
+      "attentionScore": 768,
+      "earnings": "980 $ATTN",
+      "afiLimit": "95 $ATTN",
+      "streak": "18 days"
+    },
+    {
+      "handle": "@signalchaser",
+      "attentionScore": 702,
+      "earnings": "710 $ATTN",
+      "afiLimit": "70 $ATTN",
+      "streak": "9 days"
+    }
+  ],
+  "creators": [
+    {
+      "id": "creator-alpha",
+      "handle": "PrimeLabs",
+      "category": "Immersive Music",
+      "rpm": "$142",
+      "vault": "1,200 $ATTN",
+      "aiMode": true
+    },
+    {
+      "id": "creator-beta",
+      "handle": "NovaPod",
+      "category": "Interactive Podcast",
+      "rpm": "$118",
+      "vault": "950 $ATTN",
+      "aiMode": true
+    },
+    {
+      "id": "creator-gamma",
+      "handle": "SynthForge",
+      "category": "Generative Art",
+      "rpm": "$134",
+      "vault": "740 $ATTN",
+      "aiMode": false
+    }
+  ],
+  "advertisers": [
+    {
+      "id": "adv-alpha",
+      "brand": "FluxThreads",
+      "campaigns": 3,
+      "budget": "2,300 $ATTN",
+      "aiStatus": "Auto"
+    },
+    {
+      "id": "adv-beta",
+      "brand": "PulseDrip",
+      "campaigns": 2,
+      "budget": "1,480 $ATTN",
+      "aiStatus": "Learning"
+    },
+    {
+      "id": "adv-gamma",
+      "brand": "EcoModa",
+      "campaigns": 4,
+      "budget": "3,020 $ATTN",
+      "aiStatus": "Guarded"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "camp-alpha",
+      "advertiserId": "FluxThreads",
+      "budgetRemaining": "820 $ATTN",
+      "floorCpmMicros": 1400,
+      "impressionsServed": 2400,
+      "variantCount": 4
+    },
+    {
+      "id": "camp-beta",
+      "advertiserId": "PulseDrip",
+      "budgetRemaining": "640 $ATTN",
+      "floorCpmMicros": 1650,
+      "impressionsServed": 1800,
+      "variantCount": 3
+    }
+  ],
+  "aiInstructions": [
+    {
+      "id": 1,
+      "advertiserId": "FluxThreads",
+      "instruction": "Boost eco creatives for EU viewers"
+    },
+    {
+      "id": 2,
+      "advertiserId": "PulseDrip",
+      "instruction": "Shift 20% budget to creator vault tier S"
+    }
+  ],
+  "creatorVaults": [
+    {
+      "creatorId": "PrimeLabs",
+      "stakedAmount": "1,200 $ATTN",
+      "apyBps": 1200
+    },
+    {
+      "creatorId": "NovaPod",
+      "stakedAmount": "950 $ATTN",
+      "apyBps": 1050
+    }
+  ],
+  "viewerLoans": [
+    {
+      "viewerId": "@focusmode",
+      "principal": "80 $ATTN",
+      "outstanding": "45 $ATTN",
+      "status": "active"
+    },
+    {
+      "viewerId": "@zenwatcher",
+      "principal": "50 $ATTN",
+      "outstanding": "0 $ATTN",
+      "status": "settled"
+    }
+  ],
+  "payments": {
+    "balance": "4,200 $ATTN",
+    "nextPayout": "in 4h",
+    "transactions": [
+      {
+        "id": "TX-9821",
+        "type": "Payout",
+        "amount": "+120 $ATTN",
+        "counterparty": "Creator Vault",
+        "time": "2m ago"
+      },
+      {
+        "id": "TX-9814",
+        "type": "Viewer Reward",
+        "amount": "-40 $ATTN",
+        "counterparty": "@fluxseer",
+        "time": "18m ago"
+      },
+      {
+        "id": "TX-9803",
+        "type": "Loan Repay",
+        "amount": "+25 $ATTN",
+        "counterparty": "A-Fi Desk",
+        "time": "1h ago"
+      },
+      {
+        "id": "TX-9799",
+        "type": "Vault Stake",
+        "amount": "-200 $ATTN",
+        "counterparty": "Creator Vaults",
+        "time": "3h ago"
+      }
+    ]
+  }
+}
+

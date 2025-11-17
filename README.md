@@ -7,6 +7,13 @@ AdLoom X Ultra is a Linera-native attention economy that pays viewers, creators,
 
 The build satisfies the WaveHack criteria: a fully on-chain Linera contract, GraphQL service for real-time UX, a deployable frontend, documentation, and a changelog-friendly structure.
 
+### WaveHack narrative at a glance
+
+- **User POV:** Viewers get instant $ATTN payouts and A-Fi loans, creators see live vault earnings, advertisers run an autonomous Brand OS, and developers plug in via SDK snippets.
+- **Microchain architecture (mirrored in the ledger):** creator, advertiser, and viewer accounts stream data into an Auction Engine + Payment Distributor, with campaign budgets, ad variants, vaults, and loans recorded on-chain.
+- **AI + Adaptive Ads:** Brand instructions mutate ad variants in real time, and every verified view writes a `VerifiedView` event that is immediately exposed through GraphQL.
+- **Extra features:** Creator Vault staking, Attention Finance (A-Fi) loans, campaign analytics, AI directive feeds, and a live telemetry table are surfaced both on-chain and in the frontend.
+
 ---
 
 ### 1. Prerequisites
