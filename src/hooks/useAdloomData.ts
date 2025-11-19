@@ -167,7 +167,7 @@ export function useAdloomData(limit = 6): HookState {
     }
     run();
 
-    const interval = setInterval(run, 15_000);
+    const interval = setInterval(run, 10_000); // Poll every 10 seconds for real-time feel
     return () => {
       cancelled = true;
       clearInterval(interval);

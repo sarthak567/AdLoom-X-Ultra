@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Menu, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { WalletConnectButton } from '../WalletConnectButton';
+import { LineraStatus } from '../LineraStatus';
 import { useState } from 'react';
 
 const navItems = [
@@ -45,6 +46,7 @@ export function AppShell() {
             ))}
           </nav>
           <div className="hidden items-center gap-3 md:flex">
+            <LineraStatus />
             <div className="text-right text-xs">
               <p className="font-semibold text-white">{user?.name ?? 'AdLoom Builder'}</p>
               <p className="text-white/50">{user?.organization ?? 'AdLoom'}</p>

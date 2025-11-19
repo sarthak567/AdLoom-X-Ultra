@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { useAdloomData } from "../hooks/useAdloomData";
 import { useLocalAppData } from "../hooks/useLocalAppData";
+import { MetricCard } from "../components/MetricCard";
+import { LoadingSkeleton, MetricSkeleton } from "../components/LoadingSkeleton";
 
 const primaryActions = [
   { label: "Launch Brand OS", variant: "primary" },
@@ -634,7 +636,7 @@ export default function DashboardPage() {
         className="grid gap-8 rounded-3xl border border-white/10 bg-black/40 p-8 md:grid-cols-[1.1fr_0.9fr]"
       >
         <div>
-          <p aclassName="text-sm uppercase tracking-wide text-rose-300">
+          <p className="text-sm uppercase tracking-wide text-rose-300">
             Live Telemetry
           </p>
           <h2 className="mt-2 text-3xl font-semibold text-white">
